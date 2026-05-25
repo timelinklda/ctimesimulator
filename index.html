@@ -66,7 +66,6 @@
   setInterval(updateCountdown, 1000);
 
 </script>
-</script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1082,17 +1081,17 @@
       </div>
       <div class="teaser-card">
         <div class="teaser-lbl">Poupança mensal estimada</div>
-        <div class="teaser-val blurred" id="teaser-valor">999 €</div>
+        <div class="teaser-val blurred" id="teaser-valor">— €</div>
         <div class="teaser-hint">desbloqueie para ver</div>
       </div>
       <div class="teaser-card">
         <div class="teaser-lbl">Redução de tempo</div>
-        <div class="teaser-val blurred" id="teaser-pct">99%</div>
+        <div class="teaser-val blurred" id="teaser-pct">—%</div>
         <div class="teaser-hint">desbloqueie para ver</div>
       </div>
       <div class="teaser-card">
         <div class="teaser-lbl">Dias recuperados</div>
-        <div class="teaser-val blurred" id="teaser-dias">9,9</div>
+        <div class="teaser-val blurred" id="teaser-dias">—</div>
         <div class="teaser-hint">desbloqueie para ver</div>
       </div>
     </div>
@@ -1621,7 +1620,7 @@
     };
 
     // ── Enviar para Google Sheets via Apps Script ──
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
     if (WEBHOOK_URL) {
       fetch(WEBHOOK_URL, {
         method: 'POST',
@@ -1665,7 +1664,7 @@
       if (!btnManager) return;
       btnManager.addEventListener('click', () => {
         lead.partilhou = 'Sim';
-        const WH = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+        const WH = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
         fetch(WH, {
           method: 'POST',
           mode: 'no-cors',
@@ -1756,7 +1755,7 @@
       const nome  = localStorage.getItem('ctime_lead_nome')  || '';
       const email = localStorage.getItem('ctime_lead_email') || '';
       if (!email) return;
-      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
       fetch(WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',

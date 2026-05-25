@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+// ── Carrossel de Testemunhos ──
+  let testimonialTimer = null;
+  function initTestimonials() {
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const dotsWrap = document.getElementById('testimonial-dots');
+    if (!slides.length || !dotsWrap) return;
+
+    dotsWrap.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'testimonial-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToSlide(i));
+      dotsWrap.appendChild(dot);
+    });
+
+    let current = 0;
+    function goToSlide(n) {
+      slides[current].classList.remove('active');
+      dotsWrap.children[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dotsWrap.children[current].classList.add('active');
+    }
+
+    if (testimonialTimer) clearInterval(testimonialTimer);
+    testimonialTimer = setInterval(() => goToSlide(current + 1), 6000);
+
+    const tWrap = document.querySelector('.testimonials-wrap');
+    if (tWrap) {
+      tWrap.addEventListener('mouseenter', () => clearInterval(testimonialTimer));
+      tWrap.addEventListener('mouseleave', () => {
+        testimonialTimer = setInterval(() => goToSlide(current + 1), 6000);
+      });
+    }
+  }
+
+
+  // ── Countdown até 31 de Julho de 2026 ──
+  function updateCountdown() {
+    const deadline = new Date('2026-07-31T23:59:59');
+    const now = new Date();
+    const diff = deadline - now;
+    if (diff <= 0) {
+      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '00';
+      });
+      return;
+    }
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+    const pad = n => String(n).padStart(2, '0');
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = pad(val); };
+    set('cd-days',  days);
+    set('cd-hours', hours);
+    set('cd-mins',  mins);
+    set('cd-secs',  secs);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+</script>
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador CTimeMS — Ganho de Eficiência</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BB6L9S61Z2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BB6L9S61Z2');
+</script>
+
+<style>
+  :root {
+    --navy: #1a2547;
+    --navy-deep: #0f1830;
+    --orange: #f08a2c;
+    --orange-soft: #fdb564;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --ink: #1a2547;
+    --muted: #6b7591;
+    --line: #e6eaf2;
+    --soft: #eef3ff;
+    --good: #1f8f5e;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background:
+      radial-gradient(1200px 600px at -10% -20%, rgba(240,138,44,0.10), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(26,37,71,0.12), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 48px 20px;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    padding: 40px 44px;
+    border-radius: 18px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 20px 60px rgba(15, 24, 48, 0.10),
+      0 4px 12px rgba(15, 24, 48, 0.04);
+    border: 1px solid var(--line);
+  }
+
+  .logo {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto 8px auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 8px 0 6px 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 22px 0;
+  }
+
+  .disclaimer {
+    font-size: 12.5px;
+    color: #5a6480;
+    background: #fafbff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--orange);
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-top: 22px;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: var(--navy); }
+
+  .hook {
+    background: linear-gradient(135deg, #fff7ec 0%, #fff 100%);
+    border: 1px solid #f5d6a8;
+    border-left: 4px solid var(--orange);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 26px;
+    box-shadow: 0 6px 18px rgba(240,138,44,0.10);
+  }
+  .hook .q {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+  }
+  .hook ul {
+    margin: 8px 0 12px 0;
+    padding-left: 20px;
+    color: #3a4565;
+    font-size: 14px;
+  }
+  .hook ul li { margin: 4px 0; }
+  .hook .cta {
+    margin: 6px 0 0 0;
+    font-size: 15px;
+    color: var(--navy);
+  }
+  .hook .cta strong { font-weight: 800; }
+
+  label .hint {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .pre-results {
+    margin-top: 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px 18px;
+  }
+  .grid .full { grid-column: 1 / -1; }
+
+  label {
+    display: block;
+    margin-top: 6px;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--navy);
+  }
+
+  .field {
+    position: relative;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    font-size: 15px;
+    color: var(--ink);
+    background: #fafbfd;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="number"]:focus {
+    border-color: var(--orange);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(240,138,44,0.15);
+  }
+
+  button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(180deg, var(--orange) 0%, #e07a1c 100%);
+    color: white;
+    border: none;
+    margin-top: 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 6px 18px rgba(240,138,44,0.35);
+    transition: transform .08s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  button:hover { filter: brightness(1.04); box-shadow: 0 8px 22px rgba(240,138,44,0.42); }
+  button:active { transform: translateY(1px); box-shadow: 0 4px 12px rgba(240,138,44,0.30); }
+
+  .result {
+    margin-top: 28px;
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #f7faff;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s ease, transform .25s ease;
+    display: none;
+  }
+  .result.show { opacity: 1; transform: none; display: block; }
+  .result-inner { padding: 24px 24px 22px 24px; }
+
+  .result-title {
+    text-align: center;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0 0 18px 0;
+    letter-spacing: -0.01em;
+  }
+
+  .headline-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .headline-card {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .headline-card .icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(240,138,44,0.5));
+  }
+  .headline-card .body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    line-height: 1.2;
+    min-width: 0;
+    flex: 1;
+  }
+  .headline-card .hours-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .headline-card .hours-line > span { white-space: nowrap; }
+  .headline-card .lbl {
+    font-size: 13px;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+  .headline-card .highlight {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--orange-soft);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .headline-card .unit {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .mid-row {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .savings-card {
+    background: linear-gradient(135deg, #e9f8ef 0%, #d6f1e0 100%);
+    border: 1px solid #bfe6cd;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+  .savings-card .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .savings-card .lbl {
+    font-size: 12px;
+    color: #2d6a48;
+    font-weight: 600;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+  .savings-card .amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--good);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .savings-card .hint {
+    font-size: 11.5px;
+    color: #4a6b58;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  .compare-card {
+    background: var(--soft);
+    border: 1px solid #d8e2ff;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .compare-card .ttl {
+    font-size: 12px;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-grid .cell {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .compare-grid .cell .name {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+  .compare-grid .cell .price {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .compare-grid .cell.ctime .price { color: var(--good); }
+  .compare-grid .vs {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 12px;
+    text-align: center;
+  }
+  .stat .ico {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #fff4e3;
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin: 0 auto 8px auto;
+  }
+  .stat .lbl {
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 2px;
+    line-height: 1.25;
+  }
+  .stat .val {
+    font-weight: 800;
+    color: var(--navy);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .stat .val.val-sm {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .stat.savings .ico { background: #e6f6ed; color: var(--good); }
+  .stat.savings .val { color: var(--good); }
+
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .insights {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .insights .ttl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .insights .ttl .star {
+    color: var(--orange);
+  }
+  .insights ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 11.5px;
+    color: #3a4565;
+    line-height: 1.5;
+  }
+  .insights ul li { margin: 3px 0; }
+
+  .cta-card {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe6c8 100%);
+    border: 1px solid #f5d6a8;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cta-card .ttl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .cta-card p {
+    font-size: 11.5px;
+    color: #4a4538;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(180deg, var(--orange) 0%, #e07a1c 100%);
+    color: #fff;
+    text-decoration: none;
+    padding: 9px 14px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(240,138,44,0.30);
+    transition: filter .15s ease, transform .08s ease;
+  }
+  .cta-btn:hover { filter: brightness(1.05); }
+  .cta-btn:active { transform: translateY(1px); }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .headline-row { grid-template-columns: 1fr; }
+    .mid-row { grid-template-columns: 1fr; }
+    .bottom-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    body { padding: 24px 12px; }
+    .container { padding: 26px 20px; border-radius: 14px; }
+    .grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .compare-grid .vs { display: none; }
+    .headline-card .highlight { font-size: 22px; }
+    .savings-card .amount { font-size: 19px; }
+  }
+
+  /* ── Lead Gate ── */
+  .lead-gate {
+    margin-top: 28px;
+    background: linear-gradient(135deg, #fff7ec 0%, #fff 100%);
+    border: 1px solid #f5d6a8;
+    border-left: 4px solid var(--orange);
+    border-radius: 14px;
+    padding: 22px 24px 20px;
+    box-shadow: 0 6px 18px rgba(240,138,44,0.10);
+  }
+  .lead-gate-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 4px 0;
+  }
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 16px 0;
+    line-height: 1.45;
+  }
+  .lead-gate-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .lead-gate-fields .field { margin: 0; }
+  .lead-gate-fields label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 5px;
+    display: block;
+  }
+  .lead-gate-fields input[type="text"],
+  .lead-gate-fields input[type="email"] {
+    width: 100%;
+    padding: 11px 13px;
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid #e6eaf2;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    font-family: inherit;
+  }
+  .lead-gate-fields input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgba(240,138,44,0.13);
+  }
+  .sim-field input.input-error,
+  .grid input.input-error {
+    border-color: #e53935 !important;
+    background: #fff5f5 !important;
+  }
+  .lead-gate-fields input.input-error {
+    border-color: #e53935;
+    box-shadow: 0 0 0 4px rgba(229,57,53,0.10);
+  }
+  .lead-gate-fields .err-msg {
+    display: none;
+    font-size: 11px;
+    color: #e53935;
+    margin-top: 4px;
+  }
+  .lead-gate-fields input.input-error ~ .err-msg { display: block; }
+  .lead-guarantee {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .lead-gate-fields { grid-template-columns: 1fr; }
+  }
+
+  /* ── WOW Moment: Barra de progresso animada ── */
+  .wow-bar-wrap {
+    margin: 0 0 14px 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .wow-bar-row-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .wow-bar-row-label-ctime {
+    margin-top: 12px;
+  }
+  .wow-bar-track {
+    background: #f0f2f8;
+    border-radius: 8px;
+    height: 22px;
+    overflow: visible;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .wow-bar-hours {
+    position: absolute;
+    top: 26px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--orange);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .wow-bar-hours-ctime {
+    color: var(--navy);
+  }
+  .wow-bar-track-ctime { margin-bottom: 20px; }
+  .wow-bar-manual {
+    height: 100%;
+    background: linear-gradient(90deg, #f08a2c, #fdb564);
+    border-radius: 8px;
+    width: 0%;
+    transition: none;
+  }
+  .wow-bar-ctime {
+    height: 100%;
+    background: linear-gradient(90deg, #1a2547, #3a5090);
+    border-radius: 8px;
+    width: 0%;
+    transition: none;
+  }
+  .wow-bar-pct {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--good);
+  }
+  .wow-bar-pct span {
+    font-size: 20px;
+    font-weight: 800;
+  }
+  /* fade-in stagger for stat cards */
+  .stat { animation: fadeUp 0.4s ease both; }
+  .stat:nth-child(1) { animation-delay: 0.25s; }
+  .stat:nth-child(2) { animation-delay: 0.35s; }
+  .stat:nth-child(3) { animation-delay: 0.45s; }
+  .stat:nth-child(4) { animation-delay: 0.55s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+
+  /* ── Carrossel de Testemunhos ── */
+  .testimonials-wrap {
+    margin: 14px 0;
+    background: #2a3a6e;
+    border-radius: 14px;
+    padding: 20px 22px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stars { color: #FFD700; }
+  .testimonials-hook {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .testimonials-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .testimonial-slides {
+    position: relative;
+    min-height: 110px;
+  }
+  .testimonial-slide {
+    display: none;
+    animation: fadeInSlide .4s ease;
+  }
+  .testimonial-slide.active { display: block; }
+  @keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .testimonial-quote {
+    font-size: 13.5px;
+    color: #fff;
+    line-height: 1.55;
+    margin: 0 0 12px 0;
+    font-style: italic;
+  }
+  .testimonial-quote strong {
+    color: var(--orange-soft);
+    font-style: normal;
+    font-weight: 800;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .testimonial-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--orange-soft);
+    flex-shrink: 0;
+  }
+  .testimonial-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .testimonial-role {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 1px;
+  }
+  .testimonial-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .testimonial-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background .2s;
+    border: none;
+    padding: 0;
+  }
+  .testimonial-dot.active { background: var(--orange-soft); }
+
+
+  /* ── Bloco de Urgência ── */
+  .urgency-block {
+    margin: 14px 0 0 0;
+    background: linear-gradient(135deg, #1a2547 0%, #2a3a6e 100%);
+    border: 2px solid #f08a2c;
+    border-radius: 16px;
+    padding: 20px 22px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .urgency-block::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: rgba(240,138,44,0.08);
+    border-radius: 50%;
+  }
+  .urgency-tag {
+    display: inline-block;
+    background: #f08a2c;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .urgency-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 6px;
+    line-height: 1.35;
+  }
+  .urgency-title span {
+    color: #fdb564;
+  }
+  .urgency-sub {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.75);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .urgency-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .countdown-num {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    min-width: 52px;
+    padding: 8px 6px 6px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #fdb564;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .countdown-sep {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f08a2c;
+    padding-top: 6px;
+    line-height: 1.4;
+  }
+  .urgency-cta {
+    display: inline-block;
+    background: linear-gradient(180deg, #f08a2c, #e07a1c);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 12px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(240,138,44,0.45);
+    transition: filter .15s, transform .1s;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .urgency-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .urgency-guarantee {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 10px;
+  }
+
+
+  /* ── Confirmação de lead capturado ── */
+  .lead-toast {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #eaf7f0;
+    border: 1px solid #b6e5cf;
+    border-left: 4px solid var(--good);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #1a4d35;
+    font-weight: 500;
+    animation: fadeUp 0.4s ease;
+  }
+  .lead-toast.show { display: flex; }
+  .lead-toast-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ── CTA secundário ── */
+  .cta-secondary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .cta-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    background: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .cta-secondary:hover { border-color: var(--orange); background: #fff7ec; }
+  .cta-secondary .ico { font-size: 15px; flex-shrink: 0; }
+  @media (max-width: 480px) { .cta-secondary-row { grid-template-columns: 1fr; } }
+
+
+  /* ── Teaser pré-lead gate ── */
+  .teaser-wrap { background: #1a2547; border-radius: 14px; padding: 16px 18px; margin-top: 16px; }
+  .teaser-title { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+  .teaser-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .teaser-card { background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .teaser-card.unlocked { border-color: #f08a2c; background: rgba(240,138,44,0.12); }
+  .teaser-lbl { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+  .teaser-val { font-size: 20px; font-weight: 800; color: #fdb564; }
+  .teaser-val.blurred { filter: blur(5px); user-select: none; }
+  .teaser-hint { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .teaser-unlock { font-size: 12px; color: rgba(255,255,255,0.65); text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+  /* ── Módulos CTime ── */
+  .modules-block { background: #f4f6fb; border-radius: 14px; padding: 18px 20px; margin-top: 14px; }
+  .modules-eyebrow { font-size: 14px; color: #6b7591; margin-bottom: 6px; }
+  .modules-headline { font-size: 15px; font-weight: 800; color: #1a2547; margin-bottom: 14px; line-height: 1.35; }
+  .modules-headline span { color: #f08a2c; }
+  .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .mod-card { background: #fff; border: 0.5px solid #e6eaf2; border-radius: 10px; padding: 10px 8px; text-align: center; }
+  .mod-card.active { border-color: #f08a2c; background: #fff7ec; }
+  .mod-icon { font-size: 18px; margin-bottom: 4px; }
+  .mod-name { font-size: 10px; color: #1a2547; line-height: 1.3; }
+  .mod-tag { font-size: 9px; color: #f08a2c; margin-top: 3px; font-weight: 700; }
+  .mod-tag.more { color: #b0b5c8; }
+  .modules-cta { width: 100%; padding: 12px; background: #1a2547; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <img src="data:image/png;base64,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" alt="CTime" class="logo">
+
+  <h1>Simulador de Ganho com CTimeMS</h1>
+  <p class="subtitle">Em <strong>menos de 1 minuto</strong>, saiba quanto tempo e dinheiro a sua equipa pode recuperar todos os meses</p>
+
+  <div class="hook">
+    <p class="q">⏱️Quantas horas está a desperdiçar todos os meses?</p>
+    <ul>
+      <li>Preparação/Consolidação de articulados dispersos em vários ficheiros e folhas de Excel</li>
+      <li>Registo manual de preços nas listas dos clientes</li>
+      <li>Preparação de dezenas de consultas a subempreiteiros, de diferentes especialidades</li>
+    </ul>
+    <p class="cta">Se isto faz parte do seu dia-a-dia… <strong>este simulador é para si!</strong></p>
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label for="bc_proc">📊 Quantas vezes por mês tem de preparar/consolidar articulados manualmente? <span class="hint">(juntar ficheiros, corrigir erros, organizar informação, títulos, preços…)</span></label>
+      <input type="number" id="bc_proc" placeholder="ex: 11" min="0" step="1">
+    </div>
+    <div class="field">
+      <label for="bc_horas">⏱️ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada consolidação e registo de preços nos ficheiros dos clientes? <span class="hint">(incluindo correções, ajustes e validações manuais)</span></label>
+      <input type="number" id="bc_horas" placeholder="ex: 5,3" min="0" step="0.1">
+    </div>
+
+    <div class="field">
+      <label for="sp_proc">📩 Quantos processos/conjuntos de consultas a subempreiteiros prepara por mês? <span class="hint">(exemplo de 1 conjunto: criação de mapas, exportações, organização por especialidade de Carpintaria + AVAC + Serralharia + Inst. Eléctricas + Águas, etc...)</span></label>
+      <input type="number" id="sp_proc" placeholder="ex: 11" min="0" step="1">
+    </div>
+    <div class="field">
+      <label for="sp_horas">⏳ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada processo/conjunto de consultas de um orçamento? <span class="hint">(exportar, separar especialidades, rever e ajustar ficheiros, enviar por email)</span></label>
+      <input type="number" id="sp_horas" placeholder="ex: 1,0" min="0" step="0.01">
+    </div>
+
+    <div class="field full">
+      <label for="salario">💰 Qual o custo mensal de um técnico que executa estas tarefas? <span class="hint">(€/mês)</span></label>
+      <input type="number" id="salario" placeholder="ex: 1950" min="0" step="1">
+    </div>
+  </div>
+
+  <!-- Lead Gate -->
+  <div class="teaser-wrap" id="teaserWrap" style="display:none;">
+    <div class="teaser-title">⚡ Estimativa prévia baseada nos seus dados</div>
+    <div class="teaser-grid">
+      <div class="teaser-card unlocked">
+        <div class="teaser-lbl">Horas poupadas/mês</div>
+        <div class="teaser-val" id="teaser-horas">—</div>
+        <div class="teaser-hint">estimativa calculada</div>
+      </div>
+      <div class="teaser-card">
+        <div class="teaser-lbl">Poupança mensal estimada</div>
+        <div class="teaser-val blurred" id="teaser-valor">999 €</div>
+        <div class="teaser-hint">desbloqueie para ver</div>
+      </div>
+      <div class="teaser-card">
+        <div class="teaser-lbl">Redução de tempo</div>
+        <div class="teaser-val blurred" id="teaser-pct">99%</div>
+        <div class="teaser-hint">desbloqueie para ver</div>
+      </div>
+      <div class="teaser-card">
+        <div class="teaser-lbl">Dias recuperados</div>
+        <div class="teaser-val blurred" id="teaser-dias">9,9</div>
+        <div class="teaser-hint">desbloqueie para ver</div>
+      </div>
+    </div>
+    <div class="teaser-unlock">🔒 Introduza o seu nome e email para desbloquear a análise completa</div>
+  </div>
+
+  <div class="lead-gate">
+    <p class="lead-gate-title">🔓 Calculámos o impacto para a sua empresa. Falta, apenas, um pequeno passo para poder ver os seus números completos — e vai surpreender!</p>
+    <div class="lead-gate-fields">
+      <div class="field">
+        <label for="leadNome">Nome <span style="color:#e53935;">*</span></label>
+        <input type="text" id="leadNome" placeholder="O seu nome">
+        <span class="err-msg">Campo obrigat&#243;rio</span>
+      </div>
+      <div class="field">
+        <label for="leadEmail">Email profissional <span style="color:#e53935;">*</span></label>
+        <input type="email" id="leadEmail" placeholder="email@empresa.pt">
+        <span class="err-msg">Introduza um email v&#225;lido</span>
+      </div>
+    </div>
+    <div class="lead-guarantee">🔒 <em>Sem spam.</em> Só usamos o seu email para lhe enviar informação relevante sobre o CTimeMS.</div>
+  </div>
+
+  <button id="calcBtn" type="button">Calcular quanto tempo ganho com CTime</button>
+  <div class="lead-toast" id="leadToast">
+    <span class="lead-toast-icon">✅</span>
+    <span>Os seus resultados foram guardados. A nossa equipa entrará em contacto em breve.</span>
+  </div>
+
+  <p class="pre-results" id="preResults" style="display:none;">📉 Este é o potencial impacto da utilização do CTimeMS nestas tarefas:</p>
+
+  <div class="result" id="res" aria-live="polite"></div>
+
+  <div class="disclaimer">
+    <strong>NOTA INFORMATIVA:</strong> Este simulador baseia-se em dados médios obtidos a partir de um estudo realizado, em 2026, junto de várias empresas do sector, de diferentes dimensões. Os resultados apresentados correspondem a estimativas indicativas e têm como objetivo ilustrar o potencial de ganho de eficiência com o CTimeMS, podendo variar de acordo com a realidade específica de cada organização.
+  </div>
+
+  <footer>© CTime — Simulador de eficiência CTimeMS</footer>
+</div>
+
+<script>
+  const ratioBC = 0.032;
+  const ratioSP = 0.049;
+
+  const fmtH = n => n.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const fmt0 = n => Math.round(n).toLocaleString('pt-PT');
+  const fmtPct = n => n.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  // ── Animação de contadores ──
+  function animateCounter(el, from, to, duration, decimals, suffix) {
+    const start = performance.now();
+    const update = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = from + (to - from) * ease;
+      const formatted = current.toLocaleString('pt-PT', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      el.textContent = formatted + (suffix || '');
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  function animateBar(el, targetPct, duration) {
+    const start = performance.now();
+    const update = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(2, -10 * progress);
+      el.style.width = (targetPct * ease) + '%';
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  function calc() {
+    const bc_p   = +document.getElementById('bc_proc').value || 0;
+    const bc_h   = +document.getElementById('bc_horas').value || 0;
+    const sp_p   = +document.getElementById('sp_proc').value || 0;
+    const sp_h   = +document.getElementById('sp_horas').value || 0;
+    const salario = +document.getElementById('salario').value || 0;
+
+    const custoHora = salario / (22 * 8);
+    const manual_total = (bc_p * bc_h) + (sp_p * sp_h);
+    const ctime_total  = (bc_p * bc_h * ratioBC) + (sp_p * sp_h * ratioSP);
+    const saved        = manual_total - ctime_total;
+    const custo_manual = manual_total * custoHora;
+    const custo_ctime  = 65;
+    const valorizacao  = custo_manual - custo_ctime;
+    const dias    = saved / 8;
+    const percent = manual_total > 0 ? (saved / manual_total) * 100 : 0;
+    const ctimePct = manual_total > 0 ? (ctime_total / manual_total) * 100 : 0;
+
+    const res = document.getElementById('res');
+    res.innerHTML = `
+      <div class="result-inner">
+        <div class="headline-row">
+          <div class="headline-card">
+            <div class="icon">⏱️</div>
+            <div class="body">
+              <span class="lbl">Ganho de produtividade</span>
+              <div class="hours-line">
+                <span class="highlight" id="anim-saved">0,0 horas poupadas</span>
+                <span class="unit">por mês</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wow-bar-wrap">
+          <div class="wow-bar-row-label">⏰ Processos realizados manualmente</div>
+          <div class="wow-bar-track">
+            <div class="wow-bar-manual" id="anim-bar-manual"></div>
+            <span class="wow-bar-hours" id="anim-hours-manual">0,0 h</span>
+          </div>
+          <div class="wow-bar-row-label wow-bar-row-label-ctime">⚡ Com CTimeMS</div>
+          <div class="wow-bar-track wow-bar-track-ctime">
+            <div class="wow-bar-ctime" id="anim-bar-ctime"></div>
+            <span class="wow-bar-hours wow-bar-hours-ctime" id="anim-hours-ctime">0,0 h</span>
+          </div>
+          <div class="wow-bar-pct">Redução de <span id="anim-pct">0</span>% do tempo</div>
+        </div>
+
+        <div class="mid-row">
+          <div class="savings-card">
+            <div class="icon">💰</div>
+            <div>
+              <div class="lbl">Valorização da Poupança mensal estimada com o CTime</div>
+              <div class="amount" id="anim-valor">0 €</div>
+            </div>
+          </div>
+          <div class="compare-card">
+            <div class="ttl">Comparação de custos mensais</div>
+            <div class="compare-grid">
+              <div class="cell">
+                <div class="name">Processos manuais<br/>custo atual estimado</div>
+                <div class="price" id="anim-manual">0 €</div>
+              </div>
+              <div class="vs">VS</div>
+              <div class="cell ctime">
+                <div class="name">CTimeMS (Plano Standalone)</div>
+                <div class="price">${fmt0(custo_ctime)} €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="ico">⏰</div>
+            <div class="lbl">Tempo manual total</div>
+            <div class="val" id="anim-total">0 h</div>
+          </div>
+          <div class="stat">
+            <div class="ico">⚡</div>
+            <div class="lbl">Tempo com CTimeMS</div>
+            <div class="val" id="anim-ctime">0 h</div>
+          </div>
+          <div class="stat savings">
+            <div class="ico">📉</div>
+            <div class="lbl">Redução de tempo</div>
+            <div class="val" id="anim-pct2">0 %</div>
+          </div>
+          <div class="stat savings">
+            <div class="ico">📅</div>
+            <div class="lbl">Equivalente em dias</div>
+            <div class="val" id="anim-dias">0 dias</div>
+            <div class="lbl" style="margin-top:2px;">de trabalho recuperados por mês</div>
+          </div>
+        </div>
+
+
+        <div class="testimonials-wrap">
+          <div class="testimonials-hook">Parece bom de mais para ser verdade!</div>
+          <div class="testimonials-title"><span class="stars">⭐⭐⭐⭐⭐</span> &nbsp;O QUE DIZEM OS NOSSOS CLIENTES</div>
+          <div class="testimonial-slides" id="testimonial-slides">
+
+            <div class="testimonial-slide active">
+              <p class="testimonial-quote">"A devolução dos preços para <strong>24.380 preços unitários levaria ~30 horas</strong> de trabalho manual. Com o CTimeMS este mesmo processo foi conseguido em <strong>9 minutos e 44 segundos!</strong>"</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Adérito Cruz</div>
+                  <div class="testimonial-role">Direcção Comercial África · Mota-Engil África</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"<strong>11.590 linhas, 6.845 preços, 127 folhas de Excel.</strong> Feito manualmente iria demorar no mínimo <strong>2 dias</strong>. Com o CTimeMS: <strong>10 minutos e 41 segundos.</strong>"</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Alexandre Rito</div>
+                  <div class="testimonial-role">Dep. Orçamentos / International Tenders · Gabriel Couto</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"Um processo que demorava <strong>2 dias para importar e 2 dias para exportar</strong> passou a <strong>menos de 1 hora + 13 minutos</strong> — mesmo sendo a primeira vez que usava o programa."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Eva Oliveira</div>
+                  <div class="testimonial-role">Direcção Técnica Comercial · Mota Engil</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"Antes do CTime este processo demorava <strong>2 dias</strong>; agora, com o CTime tornou-se rápido e fiável — <strong>1 a 2 horas</strong>. Aumento de produtividade indescritivelmente positivo."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Mariana Dinis</div>
+                  <div class="testimonial-role">Coordenadora Sistema SAP · MAP</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"Inserção de <strong>9.000 preços unitários pelo método tradicional: 9 horas</strong>. Com o CTimeMS Data Transfer: <strong>1 hora</strong>. Só posso dizer uma palavra — espetacular."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">César Silva</div>
+                  <div class="testimonial-role">Depto. Propostas e Orçamentos · Alberto Couto Alves (ACA)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"A elaboração das folhas com <strong>525 preços unitários</strong> foi efectuada em cerca de <strong>10 minutos no CTime</strong>, poupando cerca de <strong>um dia de trabalho</strong> em comparação com o preenchimento manual."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Paulo Pinho</div>
+                  <div class="testimonial-role">Mota Engil</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"Com o CTimeMS conseguimos <strong>enviar consultas a várias especialidades em minutos</strong>. Verificou-se ainda um aumento de respostas aos emails enviados — mesmo que negativas."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Daniel Fernandes</div>
+                  <div class="testimonial-role">Alexandre Barbosa Borges (ABB)</div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"<strong>32.000 linhas, 6.650 price codes</strong> — ficheiro consolidado em apenas <strong>3m 42s</strong>. Por métodos tradicionais demoraria, na melhor das hipóteses, <strong>1,5 dias</strong>. A exportação final: <strong>6m 31s</strong> em vez de mais 2 dias de introdução manual."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">José Nogueira</div>
+                  <div class="testimonial-role">Depto. Comercial · Mota Engil</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"Num projeto com cerca de <strong>1.000 preços unitários</strong>, sem CTimeMS demoraríamos <strong>cerca de uma semana</strong>. Com o CTimeMS: <strong>no máximo duas horas</strong>. Uma poupança de <strong>30 a 40 horas</strong> de trabalho por projeto."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Carlos Ferreira</div>
+                  <div class="testimonial-role">Conduril</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"<strong>183 worksheets</strong>, ficheiros bloqueados que nem davam para copiar. Com o CTimeMS consegui fazer em <strong>3m 80s</strong> o que seria <strong>impossível de fazer sem esta ferramenta</strong>."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Marlene Crespo</div>
+                  <div class="testimonial-role">OMATAPALO</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"<strong>2 minutos com o CTimeMS</strong> quando demoraria <strong>30 minutos no mínimo</strong> sem o CTime. Recomendo a todos que experimentem — depois vamos pensar como é que fazíamos isto sem esta ferramenta."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Tânia Sousa</div>
+                  <div class="testimonial-role">Estudos e Propostas · Manuel Rodrigues Gouveia (MRG)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-slide">
+              <p class="testimonial-quote">"<strong>10.000 valores para preencher manualmente: 56 horas</strong> estimadas. Com o CTimeMS: <strong>4 horas de preparação + 3 minutos de exportação</strong>. Método expedito, muito fiável, e retira horas no fim do processo — quando o tempo mais escasseia."</p>
+              <div class="testimonial-author">
+                <div>
+                  <div class="testimonial-name">Chaves Pereira</div>
+                  <div class="testimonial-role">Mota-Engil África</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-dots" id="testimonial-dots"></div>
+        </div>
+        <div class="bottom-row">
+          <div class="insights">
+            <div class="ttl"><span class="star">⭐</span> <span>O que isto significa para<br>a sua empresa</span></div>
+            <ul>
+              <li>Mais tempo disponível para analisar e rever orçamentos;</li>
+              <li>Redução de erros, trabalho repetido e tarefas manuais repetitivas;</li>
+              <li>Resposta mais rápida a concursos — sem perder oportunidades por falta de tempo;</li>
+              <li>Decisões tomadas com dados sustentados e fiáveis.</li>
+            </ul>
+          </div>
+          <div class="cta-card">
+            <div>
+              <div class="ttl">🚀 Pronto para transformar estes números em realidade?</div>
+              <p>Agende uma demonstração gratuita e descubra como o CTimeMS pode ajudar a sua empresa a alcançar estes resultados.</p>
+            </div>
+            <a href="https://cal.com/timelink-lda-zlugro/ctimems-demonstration" class="cta-btn" target="_blank" rel="noopener">Agendar demonstração gratuita</a>
+            <div class="cta-secondary-row" style="grid-template-columns: 1fr;">
+              <a class="cta-secondary" id="btn-send-manager">
+                <span class="ico">📤</span>Partilhar com quem decide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="modules-block">
+          <div class="modules-eyebrow">E há muito mais funcionalidades a descobrir, <strong>muito mais tempo a poupar.</strong></div>
+          <div class="modules-headline">Consolidações e consultas são apenas <span>2 dos 9 módulos</span> disponíveis</div>
+          <div class="modules-grid">
+            <div class="mod-card active"><div class="mod-icon">📋</div><div class="mod-name">Bill Consolidation</div><div class="mod-tag">já simulado</div></div>
+            <div class="mod-card active"><div class="mod-icon">📩</div><div class="mod-name">Subcontract Package</div><div class="mod-tag">já simulado</div></div>
+            <div class="mod-card"><div class="mod-icon">🔄</div><div class="mod-name">Data Transfer</div></div>
+            <div class="mod-card"><div class="mod-icon">📊</div><div class="mod-name">Special Reports</div></div>
+            <div class="mod-card"><div class="mod-icon">✉️</div><div class="mod-name">Send Mail</div></div>
+            <div class="mod-card"><div class="mod-icon">🔍</div><div class="mod-name">Subcontract Analysis</div></div>
+            <div class="mod-card"><div class="mod-icon">💰</div><div class="mod-name">Cash Flow</div></div>
+            <div class="mod-card"><div class="mod-icon">🧮</div><div class="mod-name">Budget Analysis</div></div>
+          </div>
+        </div>
+
+        <div class="urgency-block">
+          <div class="urgency-tag">⏳ Oferta por tempo limitado</div>
+          <div class="urgency-title">Adquira o CTimeMS até 31 de Julho e<br><span>pague 9 meses em vez de 12</span></div>
+          <div class="urgency-sub">Os 3 primeiros meses são por nossa conta. Comece já a poupar horas esta semana!</div>
+          <div class="urgency-countdown" id="urgency-countdown">
+            <div class="countdown-unit">
+              <div class="countdown-num" id="cd-days">--</div>
+              <div class="countdown-lbl">Dias</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <div class="countdown-num" id="cd-hours">--</div>
+              <div class="countdown-lbl">Horas</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <div class="countdown-num" id="cd-mins">--</div>
+              <div class="countdown-lbl">Min</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <div class="countdown-num" id="cd-secs">--</div>
+              <div class="countdown-lbl">Seg</div>
+            </div>
+          </div>
+          <a href="email_oferta.html" class="urgency-cta" target="_blank" onclick="registarOfertaPromocional()">🎁 Quero aproveitar esta oferta e ver os planos</a>
+          <div class="urgency-guarantee">💡 Com esta oferta, o seu investimento inicial fica imediatamente reduzido em 25%.</div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('preResults').style.display = 'block';
+    requestAnimationFrame(() => {
+      res.classList.add('show');
+      initTestimonials();
+
+      setTimeout(() => {
+        // Headline — dramático (1.4s, easeOutExpo)
+        const savedEl = document.getElementById('anim-saved');
+        if (savedEl) animateCounter(savedEl, 0, saved, 1400, 1, ' horas poupadas');
+
+        // Barras de progresso + horas em baixo
+        const barM = document.getElementById('anim-bar-manual');
+        const barC = document.getElementById('anim-bar-ctime');
+        const hoursM = document.getElementById('anim-hours-manual');
+        const hoursC = document.getElementById('anim-hours-ctime');
+
+        function animateBarWithHours(barEl, hoursEl, targetPct, targetHours, duration) {
+          const trackW = barEl.parentElement.offsetWidth;
+          const start = performance.now();
+          const update = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(2, -10 * progress);
+            const pct = targetPct * ease;
+            barEl.style.width = pct + '%';
+            if (hoursEl) {
+              const barPx = (pct / 100) * trackW;
+              const labelW = hoursEl.offsetWidth || 36;
+              // If bar is wide enough, tuck label just inside end; otherwise place just after bar end
+              let leftPos;
+              if (barPx >= labelW + 8) {
+                leftPos = barPx - labelW - 4; // inside bar end
+              } else {
+                leftPos = Math.max(0, barPx - 6); // first digit under bar end, rest overflows right
+              }
+              hoursEl.style.left = leftPos + 'px';
+              const h = targetHours * ease;
+              hoursEl.textContent = h.toLocaleString('pt-PT', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' h';
+              hoursEl.style.opacity = '1';
+            }
+            if (progress < 1) requestAnimationFrame(update);
+          };
+          requestAnimationFrame(update);
+        }
+
+        if (barM) animateBarWithHours(barM, hoursM, 100, manual_total, 3000);
+        if (barC) setTimeout(() => animateBarWithHours(barC, hoursC, ctimePct, ctime_total, 2400), 1000);
+
+        // Percentagem nas barras
+        const pctEl = document.getElementById('anim-pct');
+        if (pctEl) animateCounter(pctEl, 0, percent, 1400, 1, '');
+
+        // Restantes (ligeiramente atrasados)
+        setTimeout(() => {
+          const valorEl  = document.getElementById('anim-valor');
+          const manualEl = document.getElementById('anim-manual');
+          const totalEl  = document.getElementById('anim-total');
+          const ctimeEl  = document.getElementById('anim-ctime');
+          const pct2El   = document.getElementById('anim-pct2');
+          const diasEl   = document.getElementById('anim-dias');
+
+          if (valorEl)  animateCounter(valorEl,  0, valorizacao,  1000, 0, ' €');
+          if (manualEl) animateCounter(manualEl, 0, custo_manual, 1000, 0, ' €');
+          if (totalEl)  animateCounter(totalEl,  0, manual_total, 900,  1, ' h');
+          if (ctimeEl)  animateCounter(ctimeEl,  0, ctime_total,  900,  1, ' h');
+          if (pct2El)   animateCounter(pct2El,   0, percent,      1000, 1, ' %');
+          if (diasEl)   animateCounter(diasEl,   0, dias,         1000, 1, ' dias');
+        }, 200);
+      }, 80);
+    });
+  }
+
+  function scrollToResults() {
+    requestAnimationFrame(() => {
+      const anchor = document.getElementById('preResults');
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const target = rect.top + window.pageYOffset - 16;
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    });
+  }
+
+  let hasCalculated = false;
+
+  document.getElementById('calcBtn').addEventListener('click', () => {
+
+    // 1. Validate numeric fields first (top of form)
+    const numFields = ['bc_proc','bc_horas','sp_proc','sp_horas','salario'];
+    let numValid = true;
+    numFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value || isNaN(+el.value) || +el.value <= 0) {
+        el.classList.add('input-error');
+        numValid = false;
+      } else {
+        el.classList.remove('input-error');
+      }
+    });
+    if (!numValid) {
+      const firstError = document.querySelector('.input-error');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // 2. Validate lead fields (name + email)
+    const nomeEl  = document.getElementById('leadNome');
+    const emailEl = document.getElementById('leadEmail');
+    let valid = true;
+
+    if (!nomeEl.value.trim()) {
+      nomeEl.classList.add('input-error');
+      valid = false;
+    } else {
+      nomeEl.classList.remove('input-error');
+    }
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim());
+    if (!emailOk) {
+      emailEl.classList.add('input-error');
+      valid = false;
+    } else {
+      emailEl.classList.remove('input-error');
+    }
+
+    if (!valid) {
+      nomeEl.closest('.lead-gate').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // ── Recolha de dados do simulador ──
+    const bc_p  = +document.getElementById('bc_proc').value  || 0;
+    const bc_h  = +document.getElementById('bc_horas').value || 0;
+    const sp_p  = +document.getElementById('sp_proc').value  || 0;
+    const sp_h  = +document.getElementById('sp_horas').value || 0;
+    const sal   = +document.getElementById('salario').value  || 0;
+    const custoHora   = sal / (22 * 8);
+    const manualTotal = bc_p * bc_h + sp_p * sp_h;
+    const ctimeTotal  = bc_p * bc_h * 0.032 + sp_p * sp_h * 0.049;
+    const horasPoupadas = manualTotal - ctimeTotal;
+
+    const lead = {
+      origem:       'lead',
+      nome:         nomeEl.value.trim(),
+      email:        emailEl.value.trim(),
+      horasPoupadas: Math.round(horasPoupadas * 10) / 10,
+      bc_proc:      bc_p,
+      bc_horas:     bc_h,
+      sp_proc:      sp_p,
+      sp_horas:     sp_h,
+      salario:      sal,
+      ts:           new Date().toISOString(),
+      partilhou:    'Não'
+    };
+
+    // ── Enviar para Google Sheets via Apps Script ──
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+    if (WEBHOOK_URL) {
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lead)
+      }).catch(err => console.warn('[CTime] Webhook error:', err));
+    }
+
+    // ── Backup em localStorage ──
+    try {
+      const existing = JSON.parse(localStorage.getItem('ctime_leads') || '[]');
+      existing.push(lead);
+      localStorage.setItem('ctime_leads', JSON.stringify(existing));
+      // Guardar dados para pré-preencher email_oferta
+      localStorage.setItem('ctime_lead_nome',  lead.nome);
+      localStorage.setItem('ctime_lead_email', lead.email);
+    } catch(e) {}
+    console.log('[CTime Lead capturado]', JSON.stringify(lead));
+
+    if (typeof gtag === 'function') {
+      gtag('event', 'calcular_click', {
+        event_category: 'simulador',
+        event_label: 'Calcular quanto tempo ganho com CTime'
+      });
+      gtag('event', 'lead_captured', { event_category: 'simulador' });
+    }
+    calc();
+    hasCalculated = true;
+    scrollToResults();
+
+    // Show confirmation toast
+    setTimeout(() => {
+      const toast = document.getElementById('leadToast');
+      if (toast) toast.classList.add('show');
+    }, 800);
+
+    // Wire up "send to manager" button with personalised mailto
+    setTimeout(() => {
+      const btnManager = document.getElementById('btn-send-manager');
+      if (!btnManager) return;
+      btnManager.addEventListener('click', () => {
+        lead.partilhou = 'Sim';
+        const WH = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+        fetch(WH, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ origem: 'partilhou', nome: lead.nome, email: lead.email })
+        }).catch(()=>{});
+      });
+      const nome  = document.getElementById('leadNome').value.trim();
+      const bc_p  = document.getElementById('bc_proc').value || '?';
+      const bc_h  = document.getElementById('bc_horas').value || '?';
+      const sp_p  = document.getElementById('sp_proc').value || '?';
+      const sp_h  = document.getElementById('sp_horas').value || '?';
+      const sal   = document.getElementById('salario').value || '?';
+      const subj  = encodeURIComponent('Simulador CTimeMS — resultados da nossa equipa');
+      const body  = encodeURIComponent(
+        'Bom dia,\n\n' +
+        'Utilizei o simulador do CTimeMS e os resultados são bastante expressivos.\n\n' +
+        'Com base nos nossos processos actuais:\n' +
+        '• Consolidações/mês: ' + bc_p + ' (média de ' + bc_h + 'h cada)\n' +
+        '• Processos de consulta/mês: ' + sp_p + ' (média de ' + sp_h + 'h cada)\n' +
+        '• Custo técnico mensal: ' + sal + '€\n\n' +
+        'O simulador estima que poderíamos poupar dezenas de horas por mês — e o CTimeMS custa apenas 65€/mês.\n\n' +
+        'Deixo o link para experimentares: https://ctime.pt/simulador\n\n' +
+        'Cumprimentos,\n' + (nome || 'A equipa')
+      );
+      btnManager.href = 'mailto:?subject=' + subj + '&body=' + body;
+    }, 1200);
+  });
+  document.querySelectorAll('input[type="number"], input[type="text"], input[type="email"]').forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('calcBtn').click();
+      }
+    });
+    el.addEventListener('input', () => {
+      if (hasCalculated) calc();
+    });
+  });
+</script>
+
+
+<script>
+  function updateTeaser() {
+    const bc_p = +document.getElementById('bc_proc').value || 0;
+    const bc_h = +document.getElementById('bc_horas').value || 0;
+    const sp_p = +document.getElementById('sp_proc').value || 0;
+    const sp_h = +document.getElementById('sp_horas').value || 0;
+    const sal  = +document.getElementById('salario').value || 0;
+
+    if (!bc_p && !bc_h && !sp_p && !sp_h && !sal) return;
+
+    const custoHora = sal / (22 * 8);
+    const manual    = bc_p * bc_h + sp_p * sp_h;
+    const ctime     = bc_p * bc_h * 0.032 + sp_p * sp_h * 0.049;
+    const saved     = manual - ctime;
+    const valor     = (manual * custoHora) - 65;
+    const pct       = manual > 0 ? (saved / manual) * 100 : 0;
+    const dias      = saved / 8;
+
+    const fmt1 = n => n.toLocaleString('pt-PT', {minimumFractionDigits:1, maximumFractionDigits:1});
+    const fmt0 = n => Math.round(n).toLocaleString('pt-PT');
+
+    const horasEl = document.getElementById('teaser-horas');
+    const valorEl = document.getElementById('teaser-valor');
+    const pctEl   = document.getElementById('teaser-pct');
+    const diasEl  = document.getElementById('teaser-dias');
+
+    if (horasEl) horasEl.textContent = fmt1(saved) + ' h';
+    if (valorEl) valorEl.textContent = fmt0(valor) + ' €';
+    if (pctEl)   pctEl.textContent   = fmt1(pct) + '%';
+    if (diasEl)  diasEl.textContent  = fmt1(dias);
+
+    const wrap = document.getElementById('teaserWrap');
+    if (wrap && saved > 0) wrap.style.display = 'block';
+  }
+
+  ['bc_proc','bc_horas','sp_proc','sp_horas','salario'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateTeaser);
+  });
+</script>
+
+
+<script>
+  function registarOfertaPromocional() {
+    try {
+      const nome  = localStorage.getItem('ctime_lead_nome')  || '';
+      const email = localStorage.getItem('ctime_lead_email') || '';
+      if (!email) return;
+      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxB_JM3tJL-Odzyy-aboZKXyCUBWnWw-hoEMudrL2tQYqQM1KNz0F6gfljREhc2vzE-oA/exec';
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origem: 'oferta_promocional', nome, email })
+      }).catch(() => {});
+    } catch(e) {}
+  }
+</script>
+
+</body>
+</html>

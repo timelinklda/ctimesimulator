@@ -550,7 +550,10 @@
     line-height: 1.4;
   }
   .cta-btn {
-    display: inline-block;
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
     background: linear-gradient(180deg, var(--orange) 0%, #e07a1c 100%);
     color: #fff;
     text-decoration: none;
@@ -982,12 +985,12 @@
     justify-content: center;
     gap: 7px;
     padding: 10px 14px;
-    border: 1.5px solid var(--line);
+    border: 1.5px solid #d0d4e0;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 700;
     color: var(--navy);
-    background: #fff;
+    background: #f0f2f8;
     text-decoration: none;
     cursor: pointer;
     transition: border-color .15s, background .15s;
@@ -1045,6 +1048,28 @@
   .offer-nudge-text { flex: 1; font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4; }
   .offer-nudge-text strong { font-weight: 800; color: #fff; text-decoration: underline; }
   .offer-nudge-arrow { font-size: 18px; color: #fff; flex-shrink: 0; opacity: 0.85; }
+
+
+  /* ── CTA card full width ── */
+  .cta-card-full {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .cta-card-full .ttl {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .cta-card-full p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
 
 </style>
 </head>
@@ -1138,7 +1163,7 @@
     <div class="lead-guarantee">🔒 <em>Sem spam.</em> Só usamos o seu email para lhe enviar informação relevante sobre o CTimeMS.</div>
   </div>
 
-  <button id="calcBtn" type="button">Calcular quanto tempo ganho com CTime</button>
+  <button id="calcBtn" type="button">Mostrar quanto tempo ganho com CTime</button>
   <div class="lead-toast" id="leadToast">
     <span class="lead-toast-icon">✅</span>
     <span>Os seus resultados foram guardados.</span>
@@ -1424,28 +1449,15 @@
           </div>
           <div class="testimonial-dots" id="testimonial-dots"></div>
         </div>
-        <div class="bottom-row">
-          <div class="insights">
-            <div class="ttl"><span class="star">⭐</span> <span>O que isto significa para<br>a sua empresa</span></div>
-            <ul>
-              <li>Mais tempo disponível para analisar e rever orçamentos;</li>
-              <li>Redução de erros, trabalho repetido e tarefas manuais repetitivas;</li>
-              <li>Resposta mais rápida a concursos — sem perder oportunidades por falta de tempo;</li>
-              <li>Decisões tomadas com dados sustentados e fiáveis.</li>
-            </ul>
-          </div>
-          <div class="cta-card">
-            <div>
-              <div class="ttl">🚀 Pronto para transformar estes números em realidade?</div>
-              <p>Agende uma demonstração gratuita e descubra como o CTimeMS pode ajudar a sua empresa a alcançar estes resultados.</p>
-            </div>
+        <div class="cta-card-full">
+            <div class="ttl">🚀 Pronto para transformar estes números em realidade?</div>
+            <p>Agende uma demonstração gratuita e descubra como o CTimeMS pode ajudar a sua empresa a alcançar estes resultados. Pode também enviar um relatório simplificado para quem decide.</p>
             <a href="https://cal.com/timelink-lda-zlugro/ctimems-demonstration" class="cta-btn" target="_blank" rel="noopener">Agendar demonstração gratuita</a>
-            <div class="cta-secondary-row" style="grid-template-columns: 1fr;">
+            <div class="cta-secondary-row" style="grid-template-columns: 1fr; margin-top: 10px;">
               <a class="cta-secondary" id="btn-send-manager">
                 <span class="ico">📤</span>Partilhar com quem decide
               </a>
             </div>
-          </div>
         </div>
 
         <div class="modules-block">
@@ -1673,7 +1685,7 @@
     if (typeof gtag === 'function') {
       gtag('event', 'calcular_click', {
         event_category: 'simulador',
-        event_label: 'Calcular quanto tempo ganho com CTime'
+        event_label: 'Mostrar quanto tempo ganho com CTime'
       });
       gtag('event', 'lead_captured', { event_category: 'simulador' });
     }

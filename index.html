@@ -926,21 +926,23 @@
     line-height: 1.4;
   }
   .urgency-cta {
-    display: inline-block;
+    display: block;
     background: linear-gradient(180deg, #f08a2c, #e07a1c);
     color: #fff;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 800;
-    padding: 12px 28px;
+    padding: 14px 28px;
     border-radius: 12px;
     text-decoration: none;
-    box-shadow: 0 6px 20px rgba(240,138,44,0.45);
-    transition: filter .15s, transform .1s;
-    display: block;
     width: 100%;
     box-sizing: border-box;
+    animation: ctaPulse 1.8s ease-in-out infinite;
   }
-  .urgency-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 6px 24px rgba(240,138,44,0.5); transform: scale(1); opacity: 1; }
+    50% { box-shadow: 0 12px 48px rgba(240,138,44,1), 0 0 0 6px rgba(240,138,44,0.25); transform: scale(1.05); opacity: 0.92; }
+  }
+  .urgency-cta:hover { filter: brightness(1.07); }
   .urgency-guarantee {
     font-size: 11px;
     color: rgba(255,255,255,0.45);
@@ -1022,6 +1024,27 @@
   .mod-tag { font-size: 9px; color: #f08a2c; margin-top: 3px; font-weight: 700; }
   .mod-tag.more { color: #b0b5c8; }
   .modules-cta { width: 100%; padding: 12px; background: #1a2547; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+
+
+  /* ── Nudge oferta ── */
+  .offer-nudge {
+    background: #f08a2c;
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+    animation: nudgePulse 2.5s ease-in-out infinite;
+  }
+  @keyframes nudgePulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(240,138,44,0.3); }
+    50% { box-shadow: 0 6px 28px rgba(240,138,44,0.65); }
+  }
+  .offer-nudge-icon { font-size: 22px; flex-shrink: 0; }
+  .offer-nudge-text { flex: 1; font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4; }
+  .offer-nudge-text strong { font-weight: 800; color: #fff; text-decoration: underline; }
+  .offer-nudge-arrow { font-size: 18px; color: #fff; flex-shrink: 0; opacity: 0.85; }
 
 </style>
 </head>
@@ -1118,7 +1141,7 @@
   <button id="calcBtn" type="button">Calcular quanto tempo ganho com CTime</button>
   <div class="lead-toast" id="leadToast">
     <span class="lead-toast-icon">✅</span>
-    <span>Os seus resultados foram guardados. A nossa equipa entrará em contacto em breve.</span>
+    <span>Os seus resultados foram guardados.</span>
   </div>
 
   <p class="pre-results" id="preResults" style="display:none;">📉 Este é o potencial impacto da utilização do CTimeMS nestas tarefas:</p>
@@ -1266,6 +1289,12 @@
           </div>
         </div>
 
+
+        <div class="offer-nudge">
+          <div class="offer-nudge-icon">💡</div>
+          <div class="offer-nudge-text">Estes resultados podem ser seus. <strong>Veja a oferta exclusiva no final desta página.</strong></div>
+          <div class="offer-nudge-arrow">↓</div>
+        </div>
 
         <div class="testimonials-wrap">
           <div class="testimonials-hook">Parece bom de mais para ser verdade!</div>

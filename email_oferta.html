@@ -411,9 +411,8 @@ ${empresa}`
     const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
 
     // Desactivar botão durante envio
-    const btn = document.querySelector('.send-btn');
-    btn.textContent = 'A enviar...';
-    btn.disabled = true;
+    const btn = document.querySelector('.send-btn-special');
+    if (btn) { btn.textContent = 'A enviar...'; btn.disabled = true; }
 
     // Usar GET com parâmetros para contornar limitações CORS do Apps Script
     const params = new URLSearchParams({

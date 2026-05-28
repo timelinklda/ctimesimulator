@@ -106,12 +106,13 @@
       var(--bg);
     color: var(--ink);
     min-height: 100vh;
-    padding: 48px 20px;
+    padding: 32px 16px;
     line-height: 1.5;
   }
 
   .container {
-    max-width: 760px;
+    max-width: 960px;
+    width: 100%;
     margin: 0 auto;
     background: var(--card);
     padding: 40px 44px;
@@ -223,7 +224,8 @@
     position: relative;
   }
 
-  input[type="number"] {
+  input[type="number"],
+  input[type="text"][inputmode="decimal"] {
     width: 100%;
     padding: 12px 14px;
     margin-top: 6px;
@@ -235,8 +237,11 @@
     outline: none;
     transition: border-color .15s, box-shadow .15s, background .15s;
     font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
-  input[type="number"]:focus {
+  input[type="number"]:focus,
+  input[type="text"][inputmode="decimal"]:focus {
     border-color: var(--orange);
     background: #fff;
     box-shadow: 0 0 0 4px rgba(240,138,44,0.15);
@@ -644,7 +649,8 @@
     box-shadow: 0 0 0 4px rgba(240,138,44,0.13);
   }
   .sim-field input.input-error,
-  .grid input.input-error {
+  .grid input.input-error,
+  input[inputmode="decimal"].input-error {
     border-color: #e53935 !important;
     background: #fff5f5 !important;
   }
@@ -1038,16 +1044,18 @@
     padding: 14px 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     margin: 14px 0;
     animation: nudgePulse 2.5s ease-in-out infinite;
+    text-align: center;
   }
   @keyframes nudgePulse {
     0%, 100% { box-shadow: 0 4px 20px rgba(240,138,44,0.3); }
     50% { box-shadow: 0 6px 28px rgba(240,138,44,0.65); }
   }
   .offer-nudge-icon { font-size: 22px; flex-shrink: 0; }
-  .offer-nudge-text { flex: 1; font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4; }
+  .offer-nudge-text { flex: 1; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.4; text-align: center; }
   .offer-nudge-text strong { font-weight: 800; color: #fff; text-decoration: underline; }
   .offer-nudge-arrow { font-size: 18px; color: #fff; flex-shrink: 0; opacity: 0.85; }
 
@@ -1111,26 +1119,26 @@
 
   <div class="grid">
     <div class="field">
-      <label for="bc_proc">📊 Quantas vezes por mês tem de preparar/consolidar articulados manualmente? <span class="hint">(juntar ficheiros, corrigir erros, organizar informação, títulos, preços…)</span></label>
-      <input type="number" id="bc_proc" placeholder="ex: 11" min="0" step="1">
+      <label for="bc_proc">1. 📊 Quantas vezes por mês tem de preparar/consolidar articulados manualmente? <span class="hint">(juntar ficheiros, corrigir erros, organizar informação, títulos, preços…)</span></label>
+      <input type="text" inputmode="decimal" id="bc_proc" placeholder="ex: 11" min="0" step="1">
     </div>
     <div class="field">
-      <label for="bc_horas">⏱️ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada consolidação e registo de preços nos ficheiros dos clientes? <span class="hint">(incluindo correções, ajustes e validações manuais)</span></label>
-      <input type="number" id="bc_horas" placeholder="ex: 5,3" min="0" step="0.1">
+      <label for="bc_horas">2. ⏱️ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada consolidação e registo de preços nos ficheiros dos clientes? <span class="hint">(incluindo correções, ajustes e validações manuais)</span></label>
+      <input type="text" inputmode="decimal" id="bc_horas" placeholder="ex: 5,3" min="0" step="0.1">
     </div>
 
     <div class="field">
-      <label for="sp_proc">📩 Quantos processos/conjuntos de consultas a subempreiteiros prepara por mês? <span class="hint">(exemplo de 1 conjunto: criação de mapas, exportações, organização por especialidade de Carpintaria + AVAC + Serralharia + Inst. Eléctricas + Águas, etc...)</span></label>
-      <input type="number" id="sp_proc" placeholder="ex: 11" min="0" step="1">
+      <label for="sp_proc">3. 📩 Quantos orçamentos, com processos de consultas a subempreiteiros, prepara por mês? <span class="hint">(exemplo de 1 processo por orçamento: criação de mapas, exportações, organização com todas as especialidades de Carpintaria + AVAC + Serralharia + Inst. Eléctricas + Águas, etc.)</span></label>
+      <input type="text" inputmode="decimal" id="sp_proc" placeholder="ex: 11" min="0" step="1">
     </div>
     <div class="field">
-      <label for="sp_horas">⏳ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada processo/conjunto de consultas de um orçamento? <span class="hint">(exportar, separar especialidades, rever e ajustar ficheiros, enviar por email)</span></label>
-      <input type="number" id="sp_horas" placeholder="ex: 1,0" min="0" step="0.01">
+      <label for="sp_horas">4. ⏳ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada processo de consultas a subempreiteiros de um orçamento? <span class="hint">(exportar, separar especialidades, rever e ajustar ficheiros)</span></label>
+      <input type="text" inputmode="decimal" id="sp_horas" placeholder="ex: 1,0" min="0" step="0.01">
     </div>
 
     <div class="field full">
-      <label for="salario">💰 Qual o custo mensal de um técnico que executa estas tarefas? <span class="hint">(€/mês)</span></label>
-      <input type="number" id="salario" placeholder="ex: 1950" min="0" step="1">
+      <label for="salario">5. 💰 Qual o custo mensal de um técnico que executa estas tarefas? <span class="hint">(€/mês sem encargos)</span></label>
+      <input type="text" inputmode="decimal" id="salario" placeholder="ex: 1950" min="0" step="1">
     </div>
   </div>
 
@@ -1179,7 +1187,7 @@
     <div class="lead-guarantee">🔒 <em>Sem spam.</em> Só usamos o seu email para lhe enviar informação relevante sobre o CTimeMS.</div>
   </div>
 
-  <button id="calcBtn" type="button">Mostrar quanto tempo ganho com CTime</button>
+  <button id="calcBtn" type="button">Mostrar a análise completa da poupança total com CTime</button>
   <div class="lead-toast" id="leadToast">
     <span class="lead-toast-icon">✅</span>
     <span>Os seus resultados foram guardados.</span>
@@ -1235,11 +1243,12 @@
   }
 
   function calc() {
-    const bc_p   = +document.getElementById('bc_proc').value || 0;
-    const bc_h   = +document.getElementById('bc_horas').value || 0;
-    const sp_p   = +document.getElementById('sp_proc').value || 0;
-    const sp_h   = +document.getElementById('sp_horas').value || 0;
-    const salario = +document.getElementById('salario').value || 0;
+    const parseNum = id => parseFloat((document.getElementById(id).value || '0').replace(',', '.')) || 0;
+    const bc_p = parseNum('bc_proc');
+    const bc_h = parseNum('bc_horas');
+    const sp_p = parseNum('sp_proc');
+    const sp_h = parseNum('sp_horas');
+    const salario = parseNum('salario');
 
     const custoHora = salario / (22 * 8);
     const manual_total = (bc_p * bc_h) + (sp_p * sp_h);
@@ -1467,7 +1476,7 @@
         </div>
         <div class="cta-card-full">
             <div class="ttl">🚀 Pronto para transformar estes números em realidade?</div>
-            <p>Fale connosco e saiba como o CTimeMS pode ajudar a sua empresa a alcançar estes resultados. Pode também enviar um relatório simplificado para quem decide.</p>
+            <p>Fale connosco e saiba como o CTimeMS pode ajudar a sua empresa a alcançar estes resultados. Aproveite para partilhar um relatório simplificado com a sua equipa.</p>
 
             <div class="wa-row">
               <a href="https://wa.me/351916982968" class="wa-btn" target="_blank" rel="noopener">
@@ -1498,12 +1507,12 @@
 
             <div class="or-divider" style="margin-top:10px;">
               <div class="or-divider-line"></div>
-              <div class="or-divider-txt">ou partilhe internamente</div>
+              <div class="or-divider-txt">e partilhe internamente</div>
               <div class="or-divider-line"></div>
             </div>
 
             <a class="cta-secondary" id="btn-send-manager">
-              <span class="ico">📤</span>Partilhar com quem decide
+              <span class="ico">📤</span>Partilhar com a sua equipa
             </a>
         </div>
         </div>
@@ -1548,7 +1557,7 @@
               <div class="countdown-lbl">Seg</div>
             </div>
           </div>
-          <a href="email_oferta.html" class="urgency-cta" target="_blank" onclick="registarOfertaPromocional()">🎁 Quero aproveitar esta oferta e ver os planos</a>
+          <a href="email_oferta.html" class="urgency-cta" target="_blank" onclick="registarOfertaPromocional()">🎁 Quero ver os planos e aproveitar esta OFERTA</a>
           <div class="urgency-guarantee">💡 Com esta oferta, o seu investimento inicial fica imediatamente reduzido em 25%.</div>
         </div>
       </div>
@@ -1645,7 +1654,8 @@
     let numValid = true;
     numFields.forEach(id => {
       const el = document.getElementById(id);
-      if (!el.value || isNaN(+el.value) || +el.value <= 0) {
+      const numVal = parseFloat(el.value.replace(',', '.'));
+      if (!el.value || isNaN(numVal) || numVal <= 0) {
         el.classList.add('input-error');
         numValid = false;
       } else {
@@ -1684,11 +1694,12 @@
     }
 
     // ── Recolha de dados do simulador ──
-    const bc_p  = +document.getElementById('bc_proc').value  || 0;
-    const bc_h  = +document.getElementById('bc_horas').value || 0;
-    const sp_p  = +document.getElementById('sp_proc').value  || 0;
-    const sp_h  = +document.getElementById('sp_horas').value || 0;
-    const sal   = +document.getElementById('salario').value  || 0;
+    const parseN = id => parseFloat((document.getElementById(id).value || '0').replace(',', '.')) || 0;
+    const bc_p  = parseN('bc_proc');
+    const bc_h  = parseN('bc_horas');
+    const sp_p  = parseN('sp_proc');
+    const sp_h  = parseN('sp_horas');
+    const sal   = parseN('salario');
     const custoHora   = sal / (22 * 8);
     const manualTotal = bc_p * bc_h + sp_p * sp_h;
     const ctimeTotal  = bc_p * bc_h * 0.032 + sp_p * sp_h * 0.049;
@@ -1733,7 +1744,7 @@
     if (typeof gtag === 'function') {
       gtag('event', 'calcular_click', {
         event_category: 'simulador',
-        event_label: 'Mostrar quanto tempo ganho com CTime'
+        event_label: 'Mostrar a análise completa da poupança total com CTime'
       });
       gtag('event', 'lead_captured', { event_category: 'simulador' });
     }
@@ -1781,14 +1792,16 @@
       const subj  = encodeURIComponent('Simulador CTimeMS — ' + savedFmt + ' horas poupadas por mês');
       const body  = encodeURIComponent(
         'Bom dia,\n\n' +
-        'Utilizei o simulador do CTimeMS e os resultados são bastante expressivos.\n\n' +
+        'Acabei de utilizar o simulador do CTimeMS, da Timelink, e os resultados são bastante expressivos.\n\n' +
+        'Fazendo apenas a simulação com os módulos BC (Bill Consolidation) e SP (Subcontract Package), ' +
+        'obtive os seguintes resultados para as tarefas que fazemos diariamente:\n\n' +
         '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
         'RESULTADOS DA SIMULAÇÃO\n' +
         '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
-        '⏱️  Horas poupadas por mês:    ' + savedFmt + ' horas\n' +
-        '📉  Redução de tempo:           ' + pctEmail + '%\n' +
-        '📅  Dias recuperados por mês:   ' + diasEmail + ' dias\n' +
-        '💰  Valorização de poupança estimada:   ' + valorFmt + ' €\n' +
+        '⏱️  Horas poupadas por mês:              ' + savedFmt + ' horas\n' +
+        '📉  Redução de tempo:                    ' + pctEmail + '%\n' +
+        '📅  Dias recuperados por mês:            ' + diasEmail + ' dias\n' +
+        '💰  Valorização de poupança estimada:    ' + valorFmt + ' €\n' +
         '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
         'Com base nos nossos processos actuais:\n' +
         '• Consolidações/mês: ' + bc_p + ' (média de ' + bc_h + 'h cada)\n' +
@@ -1796,7 +1809,7 @@
         '• Custo técnico mensal: ' + sal + '€\n\n' +
         'O CTimeMS custa apenas 65€/mês — pode experimentar o simulador aqui:\n' +
         'https://ctimesimulator.vercel.app\n\n' +
-        'Cumprimentos,\n' + (nome || 'A equipa')
+        'Os meus cumprimentos,\n' + (nome || '')
       );
       btnManager.href = 'mailto:?subject=' + subj + '&body=' + body;
     }, 1200);
@@ -1817,11 +1830,12 @@
 
 <script>
   function updateTeaser() {
-    const bc_p = +document.getElementById('bc_proc').value || 0;
-    const bc_h = +document.getElementById('bc_horas').value || 0;
-    const sp_p = +document.getElementById('sp_proc').value || 0;
-    const sp_h = +document.getElementById('sp_horas').value || 0;
-    const sal  = +document.getElementById('salario').value || 0;
+    const pn = id => parseFloat((document.getElementById(id)?.value || '0').replace(',', '.')) || 0;
+    const bc_p = pn('bc_proc');
+    const bc_h = pn('bc_horas');
+    const sp_p = pn('sp_proc');
+    const sp_h = pn('sp_horas');
+    const sal  = pn('salario');
 
     if (!bc_p && !bc_h && !sp_p && !sp_h && !sal) return;
 
@@ -1852,7 +1866,18 @@
 
   ['bc_proc','bc_horas','sp_proc','sp_horas','salario'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateTeaser);
+    if (el) {
+      el.addEventListener('input', updateTeaser);
+      // Accept comma as decimal separator — replace in real time
+      el.addEventListener('keyup', function() {
+        const pos = this.selectionStart;
+        const newVal = this.value.replace(',', '.');
+        if (newVal !== this.value) {
+          this.value = newVal;
+          try { this.setSelectionRange(pos, pos); } catch(e) {}
+        }
+      });
+    }
   });
 </script>
 

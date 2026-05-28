@@ -40,11 +40,12 @@
 
     /* Testemunhos — formato simulador */
     .testimonials-wrap{background:#2a3a6e;border-radius:14px;padding:18px 20px 16px;margin-bottom:20px}
+    #t-slides{min-height:120px;position:relative}
     .testimonials-hook{font-size:15px;font-weight:800;color:#fff;margin-bottom:5px}
     .testimonials-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px}
     .stars{color:#FFD700}
     .testimonial-slide{display:none;animation:fadeUp .4s ease}
-    .testimonial-slide.active{display:block}
+    .testimonial-slide.active{display:block;min-height:120px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
     .testimonial-quote{font-size:13px;color:#fff;line-height:1.55;font-style:italic;margin:0 0 10px}
     .testimonial-quote strong{color:var(--orange-soft);font-style:normal;font-weight:800}
@@ -116,6 +117,83 @@
     /* ── Plan selector updated ── */
     .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #1a2547; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
 
+  
+    /* ── Special CTA block ── */
+    .cta-special-block {
+      background: linear-gradient(135deg, #fff7ec, #fff3e8);
+      border: 1.5px solid #f5d6a8;
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-top: 4px;
+    }
+    .urgency-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #b06a15;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .urgency-days {
+      background: #1a2547;
+      color: #fdb564;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .send-btn-special {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(180deg, #f08a2c, #d97020);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      margin-bottom: 12px;
+      animation: superPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes superPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(240,138,44,0.5), 0 2px 8px rgba(240,138,44,0.3); transform: scale(1); }
+      50% { box-shadow: 0 12px 48px rgba(240,138,44,0.85), 0 0 0 6px rgba(240,138,44,0.2); transform: scale(1.025); }
+    }
+    .micro-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .trust-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #1f8f5e;
+      color: #fff;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
   </style>
 </head>
 <body>
@@ -173,8 +251,7 @@
     <hr class="divider">
 
     <div class="form-block">
-      <div class="form-ey">🔒 Oferta exclusiva até 31 de Julho — depois o preço volta ao normal</div>
-      <div class="form-title">Escolha o seu plano e reserve já</div>
+      <div class="form-title">Escolha o seu plano e faça já o seu pedido</div>
       <div class="form-sub">A nossa equipa entra em contacto nas próximas 48 horas úteis para confirmar a proposta e agendar a instalação.</div>
 
       <div class="plan-selector" id="plan-selector">
@@ -195,8 +272,20 @@
       <div class="field full"><label for="notas">Notas ou questões adicionais</label><textarea id="notas" placeholder="Ex: Qual a diferença entre o plano PRO e o ENTERPRISE? Temos X técnicos de orçamentação..."></textarea></div>
     </div>
 
-      <button class="send-btn" onclick="sendEmail()">🚀 Enviar pedido e aproveitar a oferta</button>
-      <div class="privacy">🔒 <em>Sem spam.</em> Os seus dados são usados exclusivamente para processar este pedido.</div>
+      <div class="cta-special-block">
+        <div class="urgency-line">
+          🔥 Oferta válida por mais
+          <span class="urgency-days" id="days-left">-- dias</span>
+          — depois o preço volta ao normal
+        </div>
+        <button class="send-btn-special" onclick="sendEmail()">🚀 Enviar pedido e aproveitar a oferta</button>
+        <div class="micro-trust">
+          <div class="trust-item"><div class="trust-check">✓</div> Sem compromisso</div>
+          <div class="trust-item"><div class="trust-check">✓</div> Resposta até 48h úteis</div>
+          <div class="trust-item"><div class="trust-check">✓</div> Instalação incluída</div>
+        </div>
+        <div class="privacy">🔒 <em>Sem spam.</em> Os seus dados são usados exclusivamente para processar este pedido.</div>
+      </div>
       <div class="success-msg" id="successMsg">
         <div class="success-icon">✅</div>
         <div class="success-title">Pedido recebido com sucesso!</div>
@@ -212,6 +301,14 @@
 </div>
 
 <script>
+  // Days left for urgency line
+  (function() {
+    const d = new Date('2026-07-31T23:59:59') - new Date();
+    const days = Math.max(0, Math.floor(d / 86400000));
+    const el = document.getElementById('days-left');
+    if (el) el.textContent = days + ' dias';
+  })();
+
   function tick() {
     const d = new Date('2026-07-31T23:59:59') - new Date();
     if (d <= 0) return;
@@ -335,8 +432,7 @@ ${empresa}`
   }
 
   function mostrarSucesso() {
-    document.querySelector('.send-btn').style.display = 'none';
-    document.querySelector('.privacy').style.display = 'none';
+    document.querySelector('.cta-special-block').style.display = 'none';
     const msg = document.getElementById('successMsg');
     msg.classList.add('show');
     msg.scrollIntoView({ behavior: 'smooth', block: 'center' });

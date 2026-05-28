@@ -1095,6 +1095,96 @@
   .or-divider-line { flex: 1; height: 1px; background: var(--line); }
   .or-divider-txt { font-size: 11px; color: var(--muted); }
 
+
+  /* ── Print / PDF Report ── */
+  .save-report-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px;
+    background: #e4e7f0;
+    border: 1.5px solid #c8ccd8;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: inherit;
+  }
+  .save-report-btn:hover { background: #d4d8e8; }
+
+  /* Recovery banner */
+  .recovery-banner {
+    background: #eef4ff;
+    border: 0.5px solid #c0d4f5;
+    border-left: 4px solid #1a2547;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .recovery-banner.show { display: block; }
+  .rec-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .rec-sub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .rec-btns { display: flex; gap: 8px; }
+  .rec-btn-yes { padding: 7px 16px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .rec-btn-no { padding: 7px 16px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; color: var(--muted); cursor: pointer; font-family: inherit; }
+
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0 !important;
+    }
+    html, body {
+      width: 210mm;
+      height: 297mm;
+      overflow: hidden !important;
+    }
+    body * { visibility: hidden !important; }
+    #printReport, #printReport * { visibility: visible !important; }
+    #printReport {
+      position: fixed !important;
+      top: 0 !important; left: 0 !important;
+      width: 210mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      background: #fff !important;
+      z-index: 9999 !important;
+      padding: 20mm 18mm !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      page-break-after: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #printReport * {
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+    }
+  }
+
+  /* Print report layout */
+  #printReport { display: none; }
+  .pr-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 2px solid #1a2547; margin-bottom: 20px; }
+  .pr-logo { font-size: 28px; font-weight: 800; }
+  .pr-logo-c { color: #1a2547; }
+  .pr-logo-t { color: #f08a2c; }
+  .pr-date { font-size: 12px; color: #6b7591; }
+  .pr-title { font-size: 15px; font-weight: 800; color: #1a2547; margin-bottom: 12px; }
+  .pr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .pr-stat { background: #f4f6fb; border-radius: 10px; padding: 12px 14px; }
+  .pr-stat-lbl { font-size: 11px; color: #6b7591; margin-bottom: 4px; }
+  .pr-stat-val { font-size: 18px; font-weight: 800; color: #f08a2c; }
+  .pr-stat-val.green { color: #1f8f5e; }
+  .pr-inputs { border-top: 1px solid #e6eaf2; padding-top: 10px; margin-bottom: 10px; }
+  .pr-inputs-title { font-size: 11px; font-weight: 700; color: #6b7591; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
+  .pr-input-row { display: flex; justify-content: space-between; font-size: 12px; color: #6b7591; margin-bottom: 4px; }
+  .pr-input-row span { color: #1a2547; font-weight: 700; }
+  .pr-footer { border-top: 1px solid #e6eaf2; padding-top: 12px; font-size: 11px; color: #6b7591; display: flex; justify-content: space-between; }
+  .pr-note { font-size: 11px; color: #6b7591; font-style: italic; margin-top: 12px; }
+
 </style>
 </head>
 
@@ -1106,6 +1196,15 @@
 
   <h1>Simulador de Ganho com CTimeMS</h1>
   <p class="subtitle">Em <strong>menos de 1 minuto</strong>, saiba quanto tempo e dinheiro a sua equipa pode recuperar todos os meses</p>
+
+  <div class="recovery-banner" id="recoveryBanner">
+    <div class="rec-title">💾 Tem uma simulação guardada</div>
+    <div class="rec-sub" id="recSub"></div>
+    <div class="rec-btns">
+      <button class="rec-btn-yes" onclick="recoverSimulation()">Recuperar simulação</button>
+      <button class="rec-btn-no" onclick="dismissRecovery()">Começar de novo</button>
+    </div>
+  </div>
 
   <div class="hook">
     <p class="q">⏱️Quantas horas está a desperdiçar todos os meses?</p>
@@ -1517,6 +1616,10 @@
         </div>
         </div>
 
+        <button class="save-report-btn" id="saveReportBtn" onclick="printReport()">
+          📄 Guardar / Imprimir relatório desta simulação
+        </button>
+
         <div class="modules-block">
           <div class="modules-eyebrow">E há muito mais funcionalidades a descobrir, <strong>muito mais tempo a poupar.</strong></div>
           <div class="modules-headline">Consolidações e consultas são apenas <span>2 dos 9 módulos</span> disponíveis</div>
@@ -1738,6 +1841,16 @@
       // Guardar dados para pré-preencher email_oferta
       localStorage.setItem('ctime_lead_nome',  lead.nome);
       localStorage.setItem('ctime_lead_email', lead.email);
+      // Guardar simulação completa para recuperação
+      saveSimulation({
+        nome:     lead.nome,
+        email:    lead.email,
+        bc_proc:  bc_p,
+        bc_horas: bc_h,
+        sp_proc:  sp_p,
+        sp_horas: sp_h,
+        salario:  sal
+      });
     } catch(e) {}
     console.log('[CTime Lead capturado]', JSON.stringify(lead));
 
@@ -1896,6 +2009,122 @@
         body: JSON.stringify({ origem: 'oferta_promocional', nome, email })
       }).catch(() => {});
     } catch(e) {}
+  }
+</script>
+
+
+<div id="printReport">
+  <div class="pr-header">
+    <div class="pr-logo"><span class="pr-logo-c">C</span><span class="pr-logo-t">Time</span><span style="color:#6b7591;font-size:16px;font-weight:400">MS</span></div>
+    <div class="pr-date" id="pr-date"></div>
+  </div>
+  <div class="pr-title" id="pr-title">Análise de poupança</div>
+  <div class="pr-grid">
+    <div class="pr-stat"><div class="pr-stat-lbl">Horas poupadas/mês</div><div class="pr-stat-val" id="pr-horas"></div></div>
+    <div class="pr-stat"><div class="pr-stat-lbl">Redução de tempo</div><div class="pr-stat-val" id="pr-pct"></div></div>
+    <div class="pr-stat"><div class="pr-stat-lbl">Dias recuperados/mês</div><div class="pr-stat-val green" id="pr-dias"></div></div>
+    <div class="pr-stat"><div class="pr-stat-lbl">Valorização de poupança estimada</div><div class="pr-stat-val green" id="pr-valor"></div></div>
+  </div>
+  <div class="pr-inputs">
+    <div class="pr-inputs-title">Base da simulação</div>
+    <div class="pr-input-row">1. Quantas vezes por mês prepara/consolida articulados manualmente? <span id="pr-bc-proc"></span></div>
+    <div class="pr-input-row">2. Quanto tempo demora, em média, cada consolidação? <span id="pr-bc-horas"></span></div>
+    <div class="pr-input-row">3. Quantos orçamentos com processos de consultas a subempreiteiros prepara por mês? <span id="pr-sp-proc"></span></div>
+    <div class="pr-input-row">4. Quanto tempo demora, em média, cada processo de consultas? <span id="pr-sp-horas"></span></div>
+    <div class="pr-input-row">5. Custo mensal de um técnico que executa estas tarefas (sem encargos) <span id="pr-sal"></span></div>
+  </div>
+  <div class="pr-note">Este relatório é uma estimativa baseada nos dados introduzidos. Os resultados reais podem variar consoante a realidade específica de cada organização.</div>
+  <div class="pr-footer">
+    <span>CTimeMS · Timelink · info.ctime@timelink.pt</span>
+  </div>
+</div>
+
+
+<script>
+  // ── Guardar simulação em localStorage ──
+  function saveSimulation(data) {
+    try {
+      localStorage.setItem('ctime_last_sim', JSON.stringify({
+        ...data,
+        savedAt: new Date().toISOString()
+      }));
+    } catch(e) {}
+  }
+
+  // ── Verificar simulação guardada ao carregar ──
+  (function checkRecovery() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('ctime_last_sim'));
+      if (!saved || !saved.nome) return;
+      const date = new Date(saved.savedAt);
+      const fmt = date.toLocaleDateString('pt-PT', {day:'2-digit',month:'short',year:'numeric'}) +
+                  ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+      const sub = saved.bc_proc + ' consolidações · ' + saved.sp_proc + ' consultas · ' + saved.salario + ' €/mês';
+      document.getElementById('recSub').textContent = fmt + '  ·  ' + sub;
+      document.getElementById('recoveryBanner').classList.add('show');
+    } catch(e) {}
+  })();
+
+  function recoverSimulation() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('ctime_last_sim'));
+      if (!saved) return;
+      const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+      set('bc_proc',   saved.bc_proc);
+      set('bc_horas',  saved.bc_horas);
+      set('sp_proc',   saved.sp_proc);
+      set('sp_horas',  saved.sp_horas);
+      set('salario',   saved.salario);
+      set('leadNome',  saved.nome);
+      set('leadEmail', saved.email);
+      document.getElementById('recoveryBanner').classList.remove('show');
+      // Trigger teaser update
+      if (typeof updateTeaser === 'function') updateTeaser();
+    } catch(e) {}
+  }
+
+  function dismissRecovery() {
+    document.getElementById('recoveryBanner').classList.remove('show');
+    try { localStorage.removeItem('ctime_last_sim'); } catch(e) {}
+  }
+
+  // ── Print report ──
+  function printReport() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('ctime_last_sim'));
+      if (!saved) return;
+
+      const custoHora = saved.salario / (22 * 8);
+      const manual    = saved.bc_proc * saved.bc_horas + saved.sp_proc * saved.sp_horas;
+      const ctime     = saved.bc_proc * saved.bc_horas * 0.032 + saved.sp_proc * saved.sp_horas * 0.049;
+      const saved_h   = manual - ctime;
+      const valor     = (manual * custoHora) - 65;
+      const pct       = manual > 0 ? (saved_h / manual) * 100 : 0;
+      const dias      = saved_h / 8;
+
+      const fmt1 = n => (+n).toLocaleString('pt-PT', {minimumFractionDigits:1, maximumFractionDigits:1});
+      const fmt0 = n => Math.round(+n).toLocaleString('pt-PT');
+
+      const date = new Date();
+      document.getElementById('pr-date').textContent =
+        'Relatório de simulação · ' + date.toLocaleDateString('pt-PT') + ' ' +
+        date.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
+      document.getElementById('pr-title').textContent =
+        'Análise de poupança' + (saved.nome ? ' — ' + saved.nome : '');
+      document.getElementById('pr-horas').textContent  = fmt1(saved_h) + ' h';
+      document.getElementById('pr-pct').textContent    = fmt1(pct) + '%';
+      document.getElementById('pr-dias').textContent   = fmt1(dias) + ' dias';
+      document.getElementById('pr-valor').textContent  = fmt0(valor) + ' €';
+      document.getElementById('pr-bc-proc').textContent  = saved.bc_proc + ' vezes';
+      document.getElementById('pr-bc-horas').textContent = saved.bc_horas + ' horas';
+      document.getElementById('pr-sp-proc').textContent  = saved.sp_proc + ' orçamentos';
+      document.getElementById('pr-sp-horas').textContent = saved.sp_horas + ' horas';
+      document.getElementById('pr-sal').textContent      = fmt0(saved.salario) + ' €/mês';
+
+      document.getElementById('printReport').style.display = 'block';
+      window.print();
+      document.getElementById('printReport').style.display = 'none';
+    } catch(e) { alert('Calcule primeiro a sua simulação antes de guardar o relatório.'); }
   }
 </script>
 

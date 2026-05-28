@@ -1222,7 +1222,7 @@
       <input type="text" inputmode="decimal" id="bc_proc" placeholder="ex: 11" min="0" step="1">
     </div>
     <div class="field">
-      <label for="bc_horas">2. ⏱️ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada consolidação e registo de preços nos ficheiros dos clientes? <span class="hint">(incluindo correções, ajustes e validações manuais)</span></label>
+      <label for="bc_horas">2. ⏱️ Quantas horas demora, em média, cada consolidação e registo de preços nos ficheiros dos clientes? <span class="hint">(incluindo correções, ajustes e validações manuais)</span></label>
       <input type="text" inputmode="decimal" id="bc_horas" placeholder="ex: 5,3" min="0" step="0.1">
     </div>
 
@@ -1231,7 +1231,7 @@
       <input type="text" inputmode="decimal" id="sp_proc" placeholder="ex: 11" min="0" step="1">
     </div>
     <div class="field">
-      <label for="sp_horas">4. ⏳ Quanto tempo demora <span class="hint">(horas)</span>, em média, cada processo de consultas a subempreiteiros de um orçamento? <span class="hint">(exportar, separar especialidades, rever e ajustar ficheiros)</span></label>
+      <label for="sp_horas">4. ⏳ Quantas horas demora, em média, cada processo de consultas a subempreiteiros de um orçamento? <span class="hint">(exportar, separar especialidades, rever e ajustar ficheiros)</span></label>
       <input type="text" inputmode="decimal" id="sp_horas" placeholder="ex: 1,0" min="0" step="0.01">
     </div>
 
@@ -1349,7 +1349,7 @@
     const sp_h = parseNum('sp_horas');
     const salario = parseNum('salario');
 
-    const custoHora = salario / (22 * 8);
+    const custoHora = (salario * 1.2375) / (22 * 8);
     const manual_total = (bc_p * bc_h) + (sp_p * sp_h);
     const ctime_total  = (bc_p * bc_h * ratioBC) + (sp_p * sp_h * ratioSP);
     const saved        = manual_total - ctime_total;
@@ -1803,7 +1803,7 @@
     const sp_p  = parseN('sp_proc');
     const sp_h  = parseN('sp_horas');
     const sal   = parseN('salario');
-    const custoHora   = sal / (22 * 8);
+    const custoHora   = (sal * 1.2375) / (22 * 8);
     const manualTotal = bc_p * bc_h + sp_p * sp_h;
     const ctimeTotal  = bc_p * bc_h * 0.032 + sp_p * sp_h * 0.049;
     const horasPoupadas = manualTotal - ctimeTotal;
@@ -1875,26 +1875,17 @@
     setTimeout(() => {
       const btnManager = document.getElementById('btn-send-manager');
       if (!btnManager) return;
-      btnManager.addEventListener('click', () => {
-        lead.partilhou = 'Sim';
-        const WH = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
-        fetch(WH, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ origem: 'partilhou', nome: lead.nome, email: lead.email })
-        }).catch(()=>{});
-      });
+
       const nome  = document.getElementById('leadNome').value.trim();
-      const bc_p  = document.getElementById('bc_proc').value || '?';
-      const bc_h  = document.getElementById('bc_horas').value || '?';
-      const sp_p  = document.getElementById('sp_proc').value || '?';
-      const sp_h  = document.getElementById('sp_horas').value || '?';
-      const sal   = document.getElementById('salario').value || '?';
-      // Calcular os valores reais para incluir no email
-      const custoHoraEmail = (+sal) / (22 * 8);
-      const manualEmail    = (+bc_p * +bc_h) + (+sp_p * +sp_h);
-      const ctimeEmail     = (+bc_p * +bc_h * 0.032) + (+sp_p * +sp_h * 0.049);
+      const bc_p  = parseN('bc_proc');
+      const bc_h  = parseN('bc_horas');
+      const sp_p  = parseN('sp_proc');
+      const sp_h  = parseN('sp_horas');
+      const sal   = parseN('salario');
+
+      const custoHoraEmail = (sal * 1.2375) / (22 * 8);
+      const manualEmail    = (bc_p * bc_h) + (sp_p * sp_h);
+      const ctimeEmail     = (bc_p * bc_h * 0.032) + (sp_p * sp_h * 0.049);
       const savedEmail     = manualEmail - ctimeEmail;
       const valorEmail     = (manualEmail * custoHoraEmail) - 65;
       const pctEmail       = manualEmail > 0 ? ((savedEmail / manualEmail) * 100).toFixed(1) : 0;
@@ -1924,7 +1915,22 @@
         'https://ctimesimulator.vercel.app\n\n' +
         'Os meus cumprimentos,\n' + (nome || '')
       );
+
       btnManager.href = 'mailto:?subject=' + subj + '&body=' + body;
+
+      // Registo de partilha — só uma vez
+      if (!btnManager._wired) {
+        btnManager._wired = true;
+        btnManager.addEventListener('click', () => {
+          const WH = 'https://script.google.com/macros/s/AKfycbxcS5ZjR2Yt3n6R7U2kib3yUb7I1nXBEzG2Gbde7HBgWSbn562NtTLKTnlYQwPWdYz5NA/exec';
+          fetch(WH, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ origem: 'partilhou', nome: lead.nome, email: lead.email })
+          }).catch(()=>{});
+        });
+      }
     }, 1200);
   });
   document.querySelectorAll('input[type="number"], input[type="text"], input[type="email"]').forEach(el => {
@@ -1952,7 +1958,7 @@
 
     if (!bc_p && !bc_h && !sp_p && !sp_h && !sal) return;
 
-    const custoHora = sal / (22 * 8);
+    const custoHora = (sal * 1.2375) / (22 * 8);
     const manual    = bc_p * bc_h + sp_p * sp_h;
     const ctime     = bc_p * bc_h * 0.032 + sp_p * sp_h * 0.049;
     const saved     = manual - ctime;
@@ -2094,7 +2100,7 @@
       const saved = JSON.parse(localStorage.getItem('ctime_last_sim'));
       if (!saved) return;
 
-      const custoHora = saved.salario / (22 * 8);
+      const custoHora = (saved.salario * 1.2375) / (22 * 8);
       const manual    = saved.bc_proc * saved.bc_horas + saved.sp_proc * saved.sp_horas;
       const ctime     = saved.bc_proc * saved.bc_horas * 0.032 + saved.sp_proc * saved.sp_horas * 0.049;
       const saved_h   = manual - ctime;
